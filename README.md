@@ -1,9 +1,6 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-    #> Warning in setup_ns_exports(path, export_all, export_imports): Objects listed as
-    #> exports, but not present in namespace: tidy_brm_from_fit
-
 # Mapping the Perception-space of Facial Expressions in the Era of Face Masks
 
 <!-- badges: start -->
