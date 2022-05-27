@@ -16,7 +16,7 @@ analysis, figures and tables from the paper “**Mapping the
 Perception-space of Facial Expressions in the Era of Face Masks**” by
 *Verroca*, *de Rienzo*, *Gambarota* and *Sessa* (2022). The project is
 also on Open Science Framework (<https://osf.io/e2kcw/>). Supplementary
-materials are available [here](files/supplementary/supplementary.pdf)
+materials are available [here](docs/supplementary/supplementary.pdf)
 
 ## Repository
 
