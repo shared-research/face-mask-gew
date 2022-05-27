@@ -1,6 +1,9 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+    #> Warning in setup_ns_exports(path, export_all, export_imports): Objects listed as
+    #> exports, but not present in namespace: tidy_brm_from_fit
+
 # Mapping the Perception-space of Facial Expressions in the Era of Face Masks
 
 <!-- badges: start -->
@@ -12,7 +15,8 @@ This repository contains all data and scripts to reproduce statistical
 analysis, figures and tables from the paper “**Mapping the
 Perception-space of Facial Expressions in the Era of Face Masks**” by
 *Verroca*, *de Rienzo*, *Gambarota* and *Sessa* (2022). The project is
-also on Open Science Framework (<https://osf.io/e2kcw/>)
+also on Open Science Framework (<https://osf.io/e2kcw/>). Supplementary
+materials are available [here](files/supplementary/supplementary.pdf)
 
 ## Repository
 
@@ -87,6 +91,7 @@ the same results.
 -   `tidyverse`
 -   `brms`
 -   `tidybayes`
+-   `CircStats`
 -   `ftExtra`
 -   `officer`
 -   `purrr`

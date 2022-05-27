@@ -25,7 +25,7 @@ pkgs <- get_all_packages()
 [<img alt="alt_text" src="https://img.shields.io/badge/OSF-10.17605%2FOSF.IO%2FE2KCW-blue" />](https://osf.io/e2kcw/)
 <!-- badges: end -->
 
-This repository contains all data and scripts to reproduce statistical analysis, figures and tables from the paper "**Mapping the Perception-space of Facial Expressions in the Era of Face Masks**" by *Verroca*, *de Rienzo*, *Gambarota* and *Sessa* (2022). The project is also on Open Science Framework (https://osf.io/e2kcw/)
+This repository contains all data and scripts to reproduce statistical analysis, figures and tables from the paper "**Mapping the Perception-space of Facial Expressions in the Era of Face Masks**" by *Verroca*, *de Rienzo*, *Gambarota* and *Sessa* (2022). The project is also on Open Science Framework (https://osf.io/e2kcw/). Supplementary materials are available [here](files/supplementary/supplementary.pdf)
 
 ## Repository
 
