@@ -21,8 +21,8 @@ fit_ri_int <- readRDS(file.path("models", "intensity", "fit_ri_int.rds"))
 fit_ri_no3int <- readRDS(file.path("models", "intensity", "fit_ri_no3int.rds"))
 fit_ri_tas_mask <- readRDS(file.path("models", "intensity", "fit_ri_tas_mask.rds"))
 fit_ri_aq_mask <- readRDS(file.path("models", "intensity", "fit_ri_aq_mask.rds"))
-fit_ri_tas_maskint <- readRDS(file.path("models", "intensity", "fit_ri_tas_maskint.rds"))
-fit_ri_aq_maskint <- readRDS(file.path("models", "intensity", "fit_ri_aq_maskint.rds"))
+fit_ri_tas_mask_subtle <- readRDS(file.path("models", "intensity", "fit_ri_tas_mask_subtle.rds"))
+fit_ri_aq_mask_subtle <- readRDS(file.path("models", "intensity", "fit_ri_aq_mask_subtle.rds"))
 
 # Legend ------------------------------------------------------------------
 
@@ -31,7 +31,6 @@ fit_ri_aq_maskint <- readRDS(file.path("models", "intensity", "fit_ri_aq_maskint
 # Data --------------------------------------------------------------------
 
 dat_fit <- readRDS(file = file.path("data", "cleaned", "dat_fit.rds"))
-
 
 # Model 1 - mask * intensity * emotion ------------------------------------
 
@@ -66,20 +65,20 @@ fit_ri_tas_mask_flat <- brm(fit_ri_tas_mask$formula,
 success_step(fit_ri_tas_mask_flat)
 
 
-# Model 2b - mask * intensity * tas ---------------------------------------
+# Model 2b - mask * tas (subtle) ---------------------------------------
 
-fit_ri_tas_maskint_flat <- brm(fit_ri_tas_maskint$formula,
-                       data = dat_fit,
+fit_ri_tas_mask_subtle_flat <- brm(fit_ri_tas_mask_subtle$formula,
+                       data = fit_ri_tas_mask_subtle$data,
                        family = gaussian(),
                        chains = chains,
                        cores = cores,
                        iter = iter,
-                       file = "models/intensity/fit_ri_tas_maskint_flat",
+                       file = "models/intensity/fit_ri_tas_mask_subtle_flat",
                        save_pars = save_pars(all = TRUE),
                        sample_prior = samp_prior,
                        seed = seed)
 
-success_step(fit_ri_tas_maskint_flat)
+success_step(fit_ri_tas_mask_subtle_flat)
 
 # Model 3a - mask * aq ----------------------------------------------------
 
@@ -98,15 +97,15 @@ success_step(fit_ri_aq_mask_flat)
 
 # Model 3b - mask * intensity * aq ----------------------------------------
 
-fit_ri_aq_maskint_flat <- brm(fit_ri_aq_maskint$formula,
-                      data = dat_fit,
+fit_ri_aq_mask_subtle_flat <- brm(fit_ri_aq_mask_subtle$formula,
+                      data = fit_ri_aq_mask_subtle$data,
                       family = gaussian(),
                       chains = chains,
                       cores = cores,
                       iter = iter,
-                      file = "models/intensity/fit_ri_aq_maskint_flat",
+                      file = "models/intensity/fit_ri_aq_mask_subtle_flat",
                       save_pars = save_pars(all = TRUE),
                       sample_prior = samp_prior,
                       seed = seed)
 
-success_step(fit_ri_aq_maskint_flat)
+success_step(fit_ri_aq_mask_subtle_flat)

@@ -63,7 +63,49 @@ dat <- readRDS(file.path("data", "cleaned", "valid", "dat_valid_ang_final.rds"))
 emo_coords <- readRDS(file.path("objects", "emo_coords.rds"))
 intensity_objects <- readRDS(file.path("objects", "intensity_objects.rds"))
 circular_objects <- readRDS(file.path("objects", "circular_objects.rds"))
+
 emo_order = c("Surprise", "Sadness", "Happiness", "Fear", "Disgust", "Anger")
+
+# EDA Table ---------------------------------------------------------------
+
+# the mean is the angular mean in radians. the computation is the same as
+# using:
+# ang <- circular::circular(dat$angle, units = "degrees", modulo = "2pi")
+# circular::mean.circular(dat$angle)
+# with less computation
+# test: rad_to_deg(CircStats::circ.mean(dat$theta)) %% 360
+
+tab_eda <- dat %>% 
+  group_by(emotion, mask, intensity) %>%
+  summarise(m_angle = rad_to_deg(CircStats::circ.mean(theta)) %% 360,
+            var_angle = 1 - CircStats::circ.disp(theta)$var,
+            m_int = mean(int),
+            sd_int = sd(int)) %>% 
+  left_join(., emo_coords %>% dplyr::select(emotion, angle_emo), by = "emotion") %>% 
+  dplyr::select(emotion, angle_emo, everything()) %>% 
+  clean_emotion_names(emotion) %>% 
+  mutate(emotion = factor(emotion),
+         emotion = fct_relevel(emotion, "Neutral")) %>% 
+  arrange(emotion) %>% 
+  flextable_with_param() %>% 
+  colformat_double(digits = 2) %>% 
+  colformat_double(j = 2, digits = 0) %>% 
+  theme_vanilla() %>% 
+  set_header_labels(values = list(
+    emotion = "Emotion",
+    angle_emo = "Wheel Angle°",
+    mask = "Mask",
+    intensity = "Intensity",
+    m_angle = "Mean°",
+    var_angle = "Var",
+    m_int = "Mean",
+    sd_int = "SD"
+  )) %>% 
+  add_header_row(values = c("", "", "", "",
+                            rep(c("Angle", "Perceived Intensity"), each = 2))) %>% 
+  merge_v(j = c(1:3)) %>% 
+  merge_h(part = "header") %>% 
+  align(align = "center", part = "all")
 
 # Theta/Kappa Mask vs No Mask ---------------------------------------------
 
@@ -264,11 +306,34 @@ tab_int_intensity_effect <- intensity_objects$tidy_post$post_fit_ri_int %>%
     emotion = "Emotion"
   ))
 
+
+# Accuracy GEW ------------------------------------------------------------
+
+tab_acc_gew <- dat %>% 
+    filter(emotion != "neutrality") %>% 
+    mutate(acc = ifelse(emotion == resp_emotion_label, 1, 0)) %>%
+    group_by(emotion, mask, intensity) %>% 
+    summarise(acc = mean(acc)) %>% 
+    clean_emotion_names(emotion) %>% 
+    set_emotion_order(emotion, emo_order, FALSE) %>% 
+    pivot_wider(names_from = emotion, values_from = acc) %>% 
+    flextable() %>% 
+    colformat_double(digits = 2) %>% 
+    autofit() %>% 
+    merge_v(j = 1:2) %>% 
+    theme_vanilla() %>% 
+    align(align = "center") %>% 
+    set_header_labels(values = list(
+      "mask" = "Mask",
+      "intensity" = "Intensity"
+    ))
+  
 # Saving ------------------------------------------------------------------
 
-tab_list <- make_named_list(tab_kappa_angle_mask_effect, tab_kappa_angle_mask_intensity_effect,
+tab_list <- make_named_list(tab_eda, tab_kappa_angle_mask_effect, tab_kappa_angle_mask_intensity_effect,
                 tab_int_mask_effect, tab_int_mask_intensity_effect,
-                tab_kappa_angle_intensity_effect, tab_int_intensity_effect)
+                tab_kappa_angle_intensity_effect, tab_int_intensity_effect,
+                tab_acc_gew)
 
 tab_files <- paste0(names(tab_list), ".docx")
 

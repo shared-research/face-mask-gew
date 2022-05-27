@@ -19,6 +19,9 @@ samp_prior <- "yes"
 
 dat_fit <- readRDS(file = file.path("data", "cleaned", "dat_fit.rds"))
 dat <- readRDS(file = file.path("data", "cleaned", "valid", "dat_valid_ang_final.rds"))
+dat_fit_subtle <- dat_fit %>% 
+  filter(intensity == "subtle")
+
 
 # Legend ------------------------------------------------------------------
 
@@ -57,7 +60,7 @@ fit_ri_int <- brm(form_ri_int,
 
 success_step(fit_ri_int)
 
-# Model 1b - Emotion*Mask no 3 int ----------------------------------------
+# Model 2 - Emotion * Mask + intensity ----------------------------------------
 
 form_ri_no3int <- bf(int ~ 0 + Intercept + emotion + mask + intensity + emotion:mask + emotion:intensity + mask:intensity + (1|id))
 
@@ -76,7 +79,7 @@ fit_ri_no3int <- brm(form_ri_no3int,
 
 success_step(fit_ri_no3int)
 
-# Model 2 - TAS -----------------------------------------------------------
+# Model 3a - tas * mask -----------------------------------------------------
 
 prior_gaussian_tas_mask <- c(
   # int
@@ -103,42 +106,26 @@ fit_ri_tas_mask <- brm(form_ri_tas_mask,
                   sample_prior = samp_prior,
                   seed = seed)
 
-success_step(fit_ri_tas)
+success_step(fit_ri_tas_mask)
 
-# Model 3b ----------------------------------------------------------------
+# Model 3b - tas * mask (subtle) -----------------------------------------
 
-prior_gaussian_tas_maskint <- c(
-  # int
-  prior(normal(150, 100), class = "b", coef = "Intercept"),
-  prior(normal(0, 50), class = "b", dpar = "", coef = "mask1"),
-  prior(normal(0, 50), class = "b", dpar = "", coef = "intensity1"),
-  prior(normal(0, 5), class = "b", dpar = "", coef = "tas"),
-  prior(normal(0, 5), class = "b", dpar = "", coef = "mask1:tas"),
-  prior(normal(0, 5), class = "b", dpar = "", coef = "intensity1:tas"),
-  prior(normal(0, 50), class = "b", dpar = "", coef = "mask1:intensity1"),
-  prior(normal(0, 5), class = "b", dpar = "", coef = "mask1:intensity1:tas")
-)
-
-form_ri_tas_maskint <- bf(
-  int ~  0 + Intercept + mask * intensity * tas + (1|id)
-)
-
-fit_ri_tas_maskint <- brm(form_ri_tas_maskint,
-                          data = dat_fit,
-                          prior = prior_gaussian_tas_maskint,
+fit_ri_tas_mask_subtle <- brm(form_ri_tas_mask,
+                          data = dat_fit_subtle,
+                          prior = prior_gaussian_tas_mask,
                           family = gaussian(),
                           chains = chains,
                           cores = cores,
                           iter = iter,
-                          file = "models/intensity/fit_ri_tas_maskint",
+                          file = "models/intensity/fit_ri_tas_mask_subtle",
                           backend = "cmdstanr",
                           save_pars = save_pars(all = TRUE),
                           sample_prior = samp_prior,
                           seed = seed)
 
-success_step(fit_ri_tas_maskint)
+success_step(fit_ri_tas_mask_subtle)
 
-# Model 3 - AQ ------------------------------------------------------------
+# Model 4a - aq * mask ------------------------------------------------------
 
 form_ri_aq_mask <- bf(
   int ~  0 + Intercept + mask_e * aq + (1|id)
@@ -165,42 +152,27 @@ fit_ri_aq_mask <- brm(form_ri_aq_mask,
                   sample_prior = samp_prior,
                   seed = seed)
 
-success_step(fit_ri_aq)
+success_step(fit_ri_aq_mask)
 
-# Model 3b - AQ ------------------------------------------------------------
+# Model 4b - aq * mask (subtle) ------------------------------------------------------
 
-form_ri_aq_maskint <- bf(
-  int ~  0 + Intercept + mask * intensity * aq + (1|id)
-)
-
-prior_gaussian_aq_maskint <- c(
-  # int
-  prior(normal(150, 100), class = "b", coef = "Intercept"),
-  prior(normal(0, 50), class = "b", dpar = "", coef = "mask1"),
-  prior(normal(0, 50), class = "b", dpar = "", coef = "intensity1"),
-  prior(normal(0, 5), class = "b", dpar = "", coef = "aq"),
-  prior(normal(0, 5), class = "b", dpar = "", coef = "mask1:aq"),
-  prior(normal(0, 5), class = "b", dpar = "", coef = "intensity1:aq"),
-  prior(normal(0, 50), class = "b", dpar = "", coef = "mask1:intensity1"),
-  prior(normal(0, 5), class = "b", dpar = "", coef = "mask1:intensity1:aq")
-)
-
-fit_ri_aq_maskint <- brm(form_ri_aq_maskint,
-                         data = dat_fit,
-                         prior = prior_gaussian_aq_maskint,
+fit_ri_aq_mask_subtle <- brm(form_ri_aq_mask,
+                         data = dat_fit_subtle,
+                         prior = prior_gaussian_aq_mask,
                          family = gaussian(),
                          chains = chains,
                          cores = cores,
                          iter = iter,
-                         file = "models/intensity/fit_ri_aq_maskint",
+                         file = "models/intensity/fit_ri_aq_mask_subtle",
                          backend = "cmdstanr",
                          save_pars = save_pars(all = TRUE),
                          sample_prior = samp_prior,
                          seed = seed)
 
-success_step(fit_ri_aq_maskint)
+success_step(fit_ri_aq_mask_subtle)
 
-# Model 4 - Neutral -------------------------------------------------------
+
+# Model 5 - mask (neutral faces) ------------------------------------------
 
 form_ri_neu <- bf(
   int ~  0 + Intercept + mask + (1|id)
