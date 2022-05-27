@@ -229,19 +229,42 @@ clean_emotion_names <- function(data, col){
 }
 
 
-#' tidy_brm_from_fit
+#' tidy_brm
 #'
 #' @param fit an object fitted with \code{brms}
 #'
 #' @return a tibble with all model information
 #' @export
 #'
-tidy_brm_from_fit <- function(fit){
-  fits <- summary(fit)
-  out <- rbind(fits$fixed, fits$random[[1]])
-  out$param = rownames(out)
-  rownames(out) <- NULL
-  return(out)
+tidy_brm <- function(fit){
+  # tidy params
+  tidy_params <- fit %>% 
+    spread_draws(`b_.*|sd_.*`, regex = TRUE) %>% 
+    pivot_longer(starts_with(c("b_", "sd_")),
+                 names_to = "param",
+                 values_to = "value") %>% 
+    group_by(param) %>% 
+    summarise(se = sd(value),
+              median_hdi(value)) %>% 
+    rename("median" = y,
+           "lower" = ymin,
+           "upper" = ymax) %>% 
+    select(param, median, se, lower, upper) %>% 
+    mutate(param = case_when(param == "sd_id__Intercept" ~ "sd(Intercept)",
+                             param == "sd_id__kappa_Intercept" ~ "sd(kappa_Intercept)",
+                             TRUE ~ param),
+           param = stringr::str_remove_all(param, "b_"))
+  
+  # get fitting information
+  fit_summary <- summary(fit)
+  fit_summary <- rbind(fit_summary$fixed, fit_summary$random[[1]])
+  fit_summary$param <- rownames(fit_summary)
+  rownames(fit_summary) <- NULL
+  fit_summary <- select(fit_summary, param, Rhat, Bulk_ESS, Tail_ESS)
+  
+  # combining
+  tidy_params %>% 
+    left_join(., fit_summary, by = "param")
 }
 
 #' tidy_priors
