@@ -1,0 +1,18 @@
+Package: FaceMaskGew
+Title: Package that contains all scripts and data to reproduce the entire analysis from the paper.
+Version: 1.0
+Authors@R:c(
+    person("Alessia", "Verroca", , "alessia.verroca@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+    person("Chiara", "de Rienzo", , "chiaramaria.derienzo@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+    person("Filippo", "Gambarota", , "filippo.gambarota@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+    person("Paola", "Sessa", , "paola.sessa@unipd.it", role = c("aut", "ctb"),
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+           )
+Description: This package contrains all scripts and data to reproduce the entire analysis from the paper.
+License: `use_mit_license()
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
