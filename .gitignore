@@ -35,3 +35,4 @@ rsconnect/
 !**/.gitkeep
 models/*
 .Rproj.user
+*.log
