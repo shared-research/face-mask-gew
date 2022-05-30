@@ -84,7 +84,7 @@ newpage <- function(){
 
 # General approach
 
-The Geneva Emotion Wheel [GEW; @Scherer2005-nc] allow to have an intuitive and informative way to collect participants responses in a facial expression perception task. Specifically, in a single measurement is possible to have information about the facial expression *category* (i.e., the response angle around the circle) and *intensity* (i.e., the distance from the center).
+The Geneva Emotion Wheel [GEW; @Scherer2005-nc] allows having an intuitive and informative way to collect participants' responses in a facial expression perception task. Specifically, in a single measurement is possible to have information about the facial expression *category* (i.e., the response angle around the circle) and *intensity* (i.e., the distance from the center).
 
 ## Facial expression category
 
@@ -97,16 +97,16 @@ In order to measure the response angle for each trial we transformed Cartesian c
 
 In this way we have the *pressed angle* for each trial. Given that each emotion has an absolute location on the GEW, we calculated a *position-free* index of performance computing the difference between the *pressed angle* and the *ideal angle* (i.e., the GEW location of the presented emotion).
 
-Then we calculated the *ideal* angle for each presented emotion, in the middle of each wheel circle. In order to obtain a measure comparable between emotion, we calculated the angular difference between the *ideal* and the pressed angle using the Equation \@ref(eq:ang-diff)
+Then we calculated the *ideal* angle for each presented emotion, in the middle of each wheel circle. To obtain a measure comparable between emotion, we calculated the angular difference between the *ideal* and the pressed angle using the Equation \@ref(eq:ang-diff)
 
 \begin{equation}
 Bias = ((ideal - pressed) + 180) \mod 360 - 180
 (\#eq:ang-diff)
 \end{equation}
 
-This new measure (*bias*) has several advantages. Despite each emotion has a different location within the wheel, each response is now expressed in a position-free metric. The *bias* is centered on 0 if there is no response tendency away from the *ideal* value. Otherwise a systematic shift would move the circular mean away from 0, clockwise (positive values) or anticlockwise (negative values). Other than the circular mean, also the spread on the circle (i.e., *uncertainty*) is an important performance measure. In fact the *bias* and the *uncertainty* are can be considered as independent measures.
+This new measure (*bias*) has several advantages. Despite each emotion have a different location within the wheel, each response is now expressed in a position-free metric. The *bias* is centered on 0 if there is no response tendency away from the *ideal* value. Otherwise, a systematic shift would move the circular mean away from 0, clockwise (positive values) or anticlockwise (negative values). Other than the circular mean, also the spread on the circle (i.e., *uncertainty*) is an important performance measure. The *bias* and the *uncertainty* are can be considered independent measures.
 
-Given the periodicity of circular data we cannot use standard statistical modelling tools [@Cremers2018-gr; @Cremers2018-in]. There are different way to model circular data [see @Cremers2018-gr for an overview]. We decided to use a generalized linear mixed-effect model using the *Von Mises* likelihood function. The *Von Mises* distribution  is an alternative to the Gaussian distribution for circular data, bounded in the range $[-\pi, \pi]$. The two parameters of the Von Mises distribution, $\mu$ and $k$^[In fact, k is a concentration parameter that can be conceptually considered as the inverse of the standard deviation. When the concentration is 0 the distribution is *uniform*] represents our *bias* and *uncertainty* parameters. In order to facilitate the interpretation of models' parameters, we transformed $k$ into the circular variance using the Equation \@ref(eq:bessel).
+Given the periodicity of circular data, we cannot use standard statistical modeling tools [@Cremers2018-gr; @Cremers2018-in]. There are different ways to model circular data [see @Cremers2018-gr for an overview]. We decided to use a generalized linear mixed-effect model using the *von Mises* likelihood function. The *von Mises* distribution is an alternative to the Gaussian distribution for circular data, bounded in the range $[-\pi, \pi]$. The two parameters of the von Mises distribution, $\mu$ and $k$^[In fact, k is a concentration parameter that can be conceptually considered as the inverse of the standard deviation. When the concentration is 0 the distribution is *uniform*] representing our *bias* and *uncertainty* parameters. To facilitate the interpretation of models' parameters, we transformed $k$ into the circular variance using Equation \@ref(eq:bessel).
 
 \begin{equation}
 \sigma^2 = 1 - \frac{I_1(k)}{I_0(k)}
@@ -126,15 +126,15 @@ I_{ij} = \sqrt{x^2 + y^2}
 
 ## Statistical models
 
-For the response angle (i.e., *bias* and *uncertainty*) we decided to use a *scale-location* mixed-effect model [@Burkner2018-vz; @Rigby2005-jq]. Under this framework all parameters of a distribution can be predicted.In particular, we are predicting the *circular mean* (i.e., *bias*) and the *concentration* (i.e., *uncertainty*) Von Mises parameters as a function of Mask (with or without), Intensity (full and subtle) and Emotion (anger, happiness, disgust, fear, surprise and sadness). For the perceived intensity, we used a regular general linear mixed-effect model.
+For the response angle (i.e., *bias* and *uncertainty*) we decided to use a *scale-location* mixed-effect model [@Burkner2018-vz; @Rigby2005-jq]. Under this framework, all parameters of a distribution can be predicted. In particular, we are predicting the *circular mean* (i.e., *bias*) and the *concentration* (i.e., *uncertainty*) Von Mises parameters as a function of Mask (with or without), Intensity (full and subtle) and Emotion (anger, happiness, disgust, fear, surprise and sadness). For the perceived intensity, we used a regular general linear mixed-effect model.
 
-We estimated both model under a Bayesian framework the R software [@r-lang] using the Brms package [@Burkner2017-di] based on the STAN probabilistic programming language [@Carpenter2017-kf]. The Bayesian statistics consist in combining information from prior knowledge (i.e. *priors*) and the data (i.e., *likelihood*) in order to obtain the *posterior* distribution [@Kruschke2018-sm].
+We estimated both models under a Bayesian framework the R software [@r-lang] using the Brms package [@Burkner2017-di] based on the STAN probabilistic programming language [@Carpenter2017-kf]. The Bayesian statistics consist in combining information from prior knowledge (i.e. *priors*) and the data (i.e., *likelihood*) to obtain the *posterior* distribution [@Kruschke2018-sm].
 
-In terms of contrast coding, for categorical predictors we used `sum contrasts` using the `contr.sum()` function. Only for TAS and AQ models we used sum coding with `0.5, -0.5` for interpreting directly the model parameters. We also mean-centered numeric predictors (TAS and AQ scores).
+In terms of contrast coding, for categorical predictors, we used `sum contrasts` using the `contr.sum()` function. We used sum-contrasts with `0.5, -0.5` only for TAS and AQ models for interpreting directly the model parameters. We also mean-centered numeric predictors (TAS and AQ scores).
 
 ### `brms`
 
-We fitted our models using the `brms` package. According to different models the `brm` setup could be different in terms of `backend`, number of `iterations` and `chains` and the parallellization approach. The general approach for `bias/uncertainty` models is the following:
+We fitted our models using the `brms` package. According to different models the `brm` setup could be different in terms of `backend`, number of `iterations` and `chains` and the parallelization approach. The general approach for `bias/uncertainty` models is the following:
 
 ```{r circular-brms, eval = FALSE, echo = TRUE}
 
@@ -166,13 +166,13 @@ brm(int ~ ... + (1|id),
     chains = 15,
     cores = 15,
     iter = 4000,
-    backend = "cmdstanr", # or the standard backend, depending on how to setup the parallellization
+    backend = "cmdstanr", # or the standard backend, depending on how to setup the parallelization
     save_pars = save_pars(all = TRUE),
     sample_prior = "yes",
     seed = 2022)
 ```
 
-When fitting models with uninformative or flat priors, we used a different chains/iteration approach to improve model fitting (especially for the Von Mises model). In particular we used the *within-chains* parallellization (https://cran.r-project.org/web/packages/brms/vignettes/brms_threading.html) for `bias/uncertainty` models:
+When fitting models with uninformative or flat priors, we used a different chains/iteration approach to improve model fitting (especially for the Von Mises model). In particular we used the *within-chains* parallelization (https://cran.r-project.org/web/packages/brms/vignettes/brms_threading.html) for `bias/uncertainty` models:
 
 ```{r circular-brms-un, eval = FALSE, echo = TRUE}
 
@@ -272,7 +272,7 @@ plots$plot_gew_emotions
 
 # Fitted Models{#fitted-models}
 
-The Table \@ref(tab:tab-info-models) depicts all fitted models with main parameters. In order to read the table:
+Table \@ref(tab:tab-info-models) depicts all fitted models with main parameters. To read the table:
 
 - `fit_ri_int`: the random-intercept three-way interaction model for *bias*/*uncertainty* and *perceived intensity*
 - `fit_ri_no3int`: the random-intercept model without the three-way interaction *bias*/*uncertainty* and *perceived intensity*
@@ -318,10 +318,10 @@ In the next section we presented all fitted models using the same approach:
 
 For the prior tables:
 
-- `prior`: is the prior distribution with parameters. All parameters without a proper prior (i.e,. different from a flat prior) are not reported in the table.
+- `prior`: is the prior distribution with parameters. All parameters without a proper prior (i.e., different from a flat prior) are not reported in the table.
 - `class`: is the type of parameter (`b` is for $\beta$ and `sd` for a standard deviation parameter e.g., by-subject intercept or residual $\sigma$)
 - `coef`: is the specific model parameters. If a prior is defined only for a *class*, then all parameters of that class will have the same prior
-- `dpar`: is for *distributional parameters*. In the case of the Von Mises model refers to $k$ coefficients
+- `dpar`: is for *distributional parameters*. In the case of the von Mises model refers to $k$ coefficients
 
 For the model tables:
 
@@ -330,7 +330,7 @@ For the model tables:
 - `Est.Error`: is the standard error of the posterior distribution
 - `95% CI`: is the 95% credible interval
 - `Rhat`: is the Gelman and Rubin [@Gelman1992-nb] convergence index. When is below 1.1 the parameters has converged.
-- `Bulk/Tail Effective Sample Size`: can be considered as the amount of information used for estimating a parameter. In general higher is better (see https://mc-stan.org/docs/2_18/reference-manual/effective-sample-size-section.html). Depends on the amount of iterations and chains of the models.
+- `Bulk/Tail Effective Sample Size`: can be considered as the amount of information used for estimating a parameter. In general higher is better (see https://mc-stan.org/docs/2_18/reference-manual/effective-sample-size-section.html). Is calculated from the number of iterations and chains of the models.
 
 \newpage
 
@@ -403,7 +403,7 @@ for(i in 1:length(intensity$tidy_fit)){
 
 # Priors Sensitivity
 
-In this section, using the same approach as before, we presented the same set of models fitted using very uninformative or flat priors. The rationale is to assess the impact of our main priors specification on parameters values. Clearly, comparing the parameters values with models in Section \@ref(fitted-models), there is almost no effect of our priors specification. Different models could have different priors on similar parameters depending on model complexity and convergence issues.
+In this section, using the same approach as before, we presented the same set of models fitted using very uninformative or flat priors. The rationale is to assess the impact of our main priors specification on parameter values. Comparing the values of the parameters with models in Section \@ref(fitted-models), there is almost no effect of our priors specification. Some models (especially TAS and AQ models) could have different priors on similar parameters depending on model complexity and convergence issues.
 
 ## Bias/Uncertainty
 
@@ -469,7 +469,7 @@ for(i in 1:length(intensity$tidy_fit)){
 
 # Suggestions for meta-analysis
 
-In this section there are some suggestions for including these results into a meta-analysis. Firstly, if presented results are not sufficient, the online OSF repository (https://osf.io/e2kcw/) contains raw data in order to compute all relevant measures. In general, for Bayesian models each parameter or posterior contrast has a full posterior probability. This makes straightforward calculating new measures (e.g., standardized effect sizes) and standard errors. The only difference from standard calculations is that each new measure will have a full posterior distribution. These new distribution can be summarized (e.g., using the median) and reported/used into a meta-analytic model.
+In this section, there are some suggestions for including these results into a meta-analysis. Firstly, if the presented results are not sufficient, the online OSF repository (https://osf.io/e2kcw/) contains raw data to compute all relevant measures. In general, for Bayesian models, each parameter or posterior contrast has a full posterior probability. This makes the computation of new measures (e.g., standardized effect sizes) and standard errors relatively easy. The only difference from standard calculations is that each new measure will have a full posterior distribution. These new distributions can be summarized (e.g., using the median) and used for the meta-analytic model.
 
 ## Bias
 
@@ -477,10 +477,10 @@ To our knowledge, for the *bias*, there is no straightforward standardized effec
 
 ## Uncertainty
 
-For the *uncertainty* it is possible to use directly the values from the posterior contrasts. In fact, the *uncertainty* (i.e., *circular variance*) is expressed in a scale from 0 to 1 (similar to a probability). All posterior contrasts can be interpreted as probability ratios and odds ratios. Also the standard error can be calculated as the standard deviation of the posterior distribution. Furthermore, it is also possible to convert from odds ratio (or similar measures) to other effect size indexes (e.g., Cohen's $d$, see https://easystats.github.io/effectsize/reference/d_to_r.html).
+For the *uncertainty* it is possible to use directly the values from the posterior contrasts. The *uncertainty* (i.e., *circular variance*) is expressed on a scale from 0 to 1 (similar to a probability). All posterior contrasts can be interpreted as probability ratios and odds ratios. Also, the standard error can be calculated as the standard deviation of the posterior distribution. Furthermore, it is also possible to convert from odds ratio (or similar measures) to other effect size indexes (e.g., Cohen's $d$, see https://easystats.github.io/effectsize/reference/d_to_r.html).
 
 ## Perceived Intensity
 
-For the perceived intensity it is possible to use a standard Cohen's $d$ measure. The only general caveat about calculating a Cohen's $d$ with multilevel models concern which standard deviation(s) to use [@Brysbaert2018-wp; @Westfall2014-im]
+For the perceived intensity it is possible to use a standard Cohen's $d$ measure. The only general caveat about calculating a Cohen's $d$ with multilevel models concerns which standard deviation(s) to use [@Brysbaert2018-wp; @Westfall2014-im]
 
 # References
